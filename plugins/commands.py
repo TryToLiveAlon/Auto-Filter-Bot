@@ -2,26 +2,15 @@ import os
 import random
 import string
 import asyncio
-import time
+from time import time as time_now
 import datetime
-
 from Script import script
 from pyrogram import Client, filters, enums
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-
 from database.ia_filterdb import Media, get_file_details, delete_files
 from database.users_chats_db import db
-from info import (
-    SECOND_DATABASE_URL, TIME_ZONE, FORCE_SUB_CHANNELS, STICKERS, INDEX_CHANNELS,
-    ADMINS, IS_VERIFY, VERIFY_TUTORIAL, VERIFY_EXPIRE, SHORTLINK_API, SHORTLINK_URL,
-    DELETE_TIME, SUPPORT_LINK, UPDATES_LINK, LOG_CHANNEL, PICS, IS_STREAM,
-    REACTIONS, PM_FILE_DELETE_TIME
-)
-from utils import (
-    upload_to_gofile, get_settings, get_size, is_subscribed, is_check_admin,
-    get_shortlink, get_verify_status, update_verify_status, save_group_settings,
-    temp, get_readable_time, get_wish, get_seconds
-)
+from info import SECOND_DATABASE_URL, TIME_ZONE, FORCE_SUB_CHANNELS, STICKERS, INDEX_CHANNELS, ADMINS, IS_VERIFY, VERIFY_TUTORIAL, VERIFY_EXPIRE, SHORTLINK_API, SHORTLINK_URL, DELETE_TIME, SUPPORT_LINK, UPDATES_LINK, LOG_CHANNEL, PICS, IS_STREAM, REACTIONS, PM_FILE_DELETE_TIME
+from utils import upload_to_gofile, get_settings, get_size, is_subscribed, is_check_admin, get_shortlink, get_verify_status, update_verify_status, save_group_settings, temp, get_readable_time, get_wish, get_seconds
 
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):
@@ -29,16 +18,14 @@ async def start(client, message):
         await message.react(emoji=random.choice(REACTIONS), big=True)
     except:
         await message.react(emoji="⚡️", big=True)
-
     d = await client.send_sticker(message.chat.id, random.choice(STICKERS))
     await asyncio.sleep(2)
     await d.delete()
-
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         if not await db.get_chat(message.chat.id):
             total = await client.get_chat_members_count(message.chat.id)
             username = f'@{message.chat.username}' if message.chat.username else 'Private'
-            await client.send_message(LOG_CHANNEL, script.NEW_GROUP_TXT.format(message.chat.title, message.chat.id, username, total))
+            await client.send_message(LOG_CHANNEL, script.NEW_GROUP_TXT.format(message.chat.title, message.chat.id, username, total))       
             await db.add_chat(message.chat.id, message.chat.title)
         wish = get_wish()
         user = message.from_user.mention if message.from_user else "Dear"
@@ -47,26 +34,29 @@ async def start(client, message):
             InlineKeyboardButton('💡 sᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ 💡', url=SUPPORT_LINK)
         ]]
         await message.reply(text=f"<b>ʜᴇʏ {user}, <i>{wish}</i>\nʜᴏᴡ ᴄᴀɴ ɪ ʜᴇʟᴘ ʏᴏᴜ??</b>", reply_markup=InlineKeyboardMarkup(btn))
-        return
-
+        return 
+        
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(message.from_user.id, message.from_user.first_name)
         await client.send_message(LOG_CHANNEL, script.NEW_USER_TXT.format(message.from_user.mention, message.from_user.id))
 
     verify_status = await get_verify_status(message.from_user.id)
     if verify_status['is_verified'] and datetime.datetime.now(TIME_ZONE) > verify_status['expire_time']:
-        await update_verify_status(message.from_user.id, {"is_verified": False})
+        await update_verify_status(message.from_user.id, is_verified=False)
 
-    if len(message.command) != 2 or message.command[1] == 'start':
+
+    if (len(message.command) != 2) or (len(message.command) == 2 and message.command[1] == 'start'):
         buttons = [[
             InlineKeyboardButton("+ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ +", url=f'http://t.me/{temp.U_NAME}?startgroup=start')
-        ], [
+        ],[
             InlineKeyboardButton('ℹ️ ᴜᴘᴅᴀᴛᴇs', url=UPDATES_LINK),
             InlineKeyboardButton('🧑‍💻 sᴜᴘᴘᴏʀᴛ', url=SUPPORT_LINK)
-        ], [
+        ],[
             InlineKeyboardButton('👨‍🚒 ʜᴇʟᴘ', callback_data='help'),
             InlineKeyboardButton('🔎 sᴇᴀʀᴄʜ ɪɴʟɪɴᴇ', switch_inline_query_current_chat=''),
             InlineKeyboardButton('📚 ᴀʙᴏᴜᴛ', callback_data='about')
+        ],[
+            InlineKeyboardButton('💰 ᴇᴀʀɴ ᴜɴʟɪᴍɪᴛᴇᴅ ᴍᴏɴᴇʏ ʙʏ ʙᴏᴛ 💰', callback_data='earn')
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
@@ -371,7 +361,7 @@ async def save_shortlink(client, message):
     try:
         _, url, api = message.text.split(" ", 2)
     except:
-        return await message.reply_text("<b>Command Incomplete:-\n\ngive me a shortlink & api along with the command...\n\nEx:- <code>/shortlerlink Modijiurl.com 465fc84f05fa0856f83cf14c739ee5a4948f20e2</code>")   
+        return await message.reply_text("<b>Command Incomplete:-\n\ngive me a shortlink & api along with the command...\n\nEx:- <code>/shortlink mdisklink.link 5843c3cc645f5077b2200a2c77e0344879880b3e</code>")   
     try:
         await get_shortlink(url, api, f'https://t.me/{temp.U_NAME}')
     except:
@@ -564,4 +554,3 @@ async def remove_fsub(client, message):
         return
     await save_group_settings(grp_id, 'fsub', FORCE_SUB_CHANNELS)
     await message.reply_text("<b>Successfully removed your force channel id...</b>")
-
