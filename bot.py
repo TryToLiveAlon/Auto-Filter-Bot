@@ -40,7 +40,7 @@ class Bot(Client):
             await super().start()
         except FloodWait as e:
             time_ = get_readable_time(e.value)
-            print(f"Warning - Flood Wait Occured, Wait For: {time_}")
+            print(f"Warning - Flood Wait Occurred, Wait For: {time_}")
             await asyncio.sleep(e.value)
             print("Info - Now Ready For Deploying !")
 
@@ -117,7 +117,7 @@ class Bot(Client):
             new_diff = min(200, limit - current)
             if new_diff <= 0:
                 return
-            messages = await self.get_messages(chat_id, list(range(current, current+new_diff+1)))
+            messages = await self.get_messages(chat_id, list(range(current, current + new_diff + 1)))
             for message in messages:
                 yield message
                 current += 1
@@ -126,7 +126,7 @@ app = Bot()
 
 async def main():
     await app.start()
-    await app.idle()  # Use idle method to keep the bot running
+    await asyncio.Event().wait()  # ✅ Keeps the bot running
 
 if __name__ == '__main__':
     asyncio.run(main())
