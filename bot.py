@@ -126,7 +126,7 @@ app = Bot()
 
 async def main():
     await app.start()
-    await app.idle()
+    await app.idle()  # Use idle method to keep the bot running
 
 if __name__ == '__main__':
     asyncio.run(main())
