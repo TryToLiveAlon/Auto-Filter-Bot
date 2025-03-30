@@ -1,32 +1,20 @@
 import asyncio
 import re
-import math
 from time import time as time_now
-from datetime import datetime, timedelta
-
-from pyrogram import Client, filters, enums
-from pyrogram.types import (
-    InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-)
-from pyrogram.errors.exceptions.bad_request_400 import (
-    MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
-)
-
+import math
+from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from Script import script
-from info import (
-    SECOND_DATABASE_URL, TIME_ZONE, ADMINS, URL, MAX_BTN, BIN_CHANNEL,
-    IS_STREAM, DELETE_TIME, FILMS_LINK, LOG_CHANNEL, SUPPORT_GROUP,
-    SUPPORT_LINK, UPDATES_LINK, LANGUAGES, QUALITY
-)
-from utils import (
-    get_size, is_subscribed, is_check_admin, get_wish, get_shortlink,
-    get_readable_time, get_poster, temp, get_settings, save_group_settings
-)
+from datetime import datetime, timedelta
+from info import SECOND_DATABASE_URL, TIME_ZONE, ADMINS, URL, MAX_BTN, BIN_CHANNEL, IS_STREAM, DELETE_TIME, FILMS_LINK, LOG_CHANNEL, SUPPORT_GROUP, SUPPORT_LINK, UPDATES_LINK, LANGUAGES, QUALITY
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto
+from pyrogram import Client, filters, enums
+from utils import get_size, is_subscribed, is_check_admin, get_wish, get_shortlink, get_readable_time, get_poster, temp, get_settings, save_group_settings
 from database.users_chats_db import db
-from database.ia_filterdb import Media, get_search_results, delete_files
+from database.ia_filterdb import Media, get_search_results,delete_files
 
 BUTTONS = {}
 CAP = {}
+
 @Client.on_message(filters.private & filters.text & filters.incoming)
 async def pm_search(client, message):
     files, n_offset, total = await get_search_results(message.text)
@@ -564,28 +552,29 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.answer("Movie request format.\nExample:\nBlack Adam or Black Adam 2022\n\nTV Reries request format.\nExample:\nLoki S01E01 or Loki S01 E01\n\nDon't use symbols.", show_alert=True)
 
     elif query.data == "start":
-    buttons = [[
-        InlineKeyboardButton("+ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ +", url=f'http://t.me/{temp.U_NAME}?startgroup=start')
-    ],[
-        InlineKeyboardButton('ℹ️ ᴜᴘᴅᴀᴛᴇs', url=UPDATES_LINK),
-        InlineKeyboardButton('🧑‍💻 ꜱᴜᴘᴘᴏʀᴛ', url=SUPPORT_LINK)
-    ],[
-        InlineKeyboardButton('👨‍🚒 ʜᴇʟᴘ', callback_data='help'),
-        InlineKeyboardButton('🔎 ɪɴʟɪɴᴇ', switch_inline_query_current_chat=''),
-        InlineKeyboardButton('📚 ᴀʙᴏᴜᴛ', callback_data='about')
-    ]]  # <-- yeh line close karni bhool gaya tha tu
-
-    reply_markup = InlineKeyboardMarkup(buttons)
-    await query.message.edit_text(
-        text=script.START_TXT.format(query.from_user.mention, get_wish()),
-        reply_markup=reply_markup,
-        parse_mode=enums.ParseMode.HTML
-    )
-
-        
-      elif query.data == "about":
         buttons = [[
-            InlineKeyboardButton('📊 sᴛᴀᴛᴜs 📊', callback_data='stats')
+            InlineKeyboardButton("+ ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ +", url=f'http://t.me/{temp.U_NAME}?startgroup=start')
+        ],[
+            InlineKeyboardButton('ℹ️ ᴜᴘᴅᴀᴛᴇs', url=UPDATES_LINK),
+            InlineKeyboardButton('🧑‍💻 ꜱᴜᴘᴘᴏʀᴛ', url=SUPPORT_LINK)
+        ],[
+            InlineKeyboardButton('👨‍🚒 ʜᴇʟᴘ', callback_data='help'),
+            InlineKeyboardButton('🔎 ɪɴʟɪɴᴇ', switch_inline_query_current_chat=''),
+            InlineKeyboardButton('📚 ᴀʙᴏᴜᴛ', callback_data='about')
+        ],[
+            InlineKeyboardButton('💰 ᴇᴀʀɴ ᴜɴʟɪᴍɪᴛᴇᴅ ᴍᴏɴᴇʏ ʙʏ ʙᴏᴛ 💰', callback_data='earn')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.message.edit_text(
+            text=script.START_TXT.format(query.from_user.mention, get_wish()),
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+        
+    elif query.data == "about":
+        buttons = [[
+            InlineKeyboardButton('📊 sᴛᴀᴛᴜs 📊', callback_data='stats'),
+            InlineKeyboardButton('🤖 sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ 🤖', callback_data='source')
         ],[
             InlineKeyboardButton('🧑‍💻 ʙᴏᴛ ᴏᴡɴᴇʀ 🧑‍💻', callback_data='owner')
         ],[
@@ -597,7 +586,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
-
 
     elif query.data == "stats":
         if query.from_user.id not in ADMINS:
@@ -637,7 +625,29 @@ async def cb_handler(client: Client, query: CallbackQuery):
             parse_mode=enums.ParseMode.HTML
         )
         
-
+    elif query.data == "earn":
+        buttons = [[
+            InlineKeyboardButton('‼️ ʜᴏᴡ ᴛᴏ ᴄᴏɴɴᴇᴄᴛ sʜᴏʀᴛɴᴇʀ ‼️', callback_data='howshort')
+        ],[
+            InlineKeyboardButton('≼ ʙᴀᴄᴋ', callback_data='start')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.message.edit_text(
+            text=script.EARN_TXT,
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+        
+    elif query.data == "howshort":
+        buttons = [[
+            InlineKeyboardButton('≼ ʙᴀᴄᴋ', callback_data='earn')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.message.edit_text(
+            text=script.HOW_TXT,
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
         
     elif query.data == "help":
         buttons = [[
@@ -652,6 +662,15 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup
         )
 
+    elif query.data == "user_command":
+        buttons = [[
+            InlineKeyboardButton('« ʙᴀᴄᴋ', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.message.edit_text(
+            text=script.USER_COMMAND_TXT,
+            reply_markup=reply_markup
+        )
         
     elif query.data == "admin_command":
         if query.from_user.id not in ADMINS:
@@ -665,7 +684,17 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup
         )
 
-    
+    elif query.data == "source":
+        buttons = [[
+            InlineKeyboardButton('≼ ʙᴀᴄᴋ', callback_data='about')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.message.edit_text(
+            text=script.SOURCE_TXT,
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+  
     elif query.data.startswith("setgs"):
         ident, set_type, status, grp_id = query.data.split("#")
         userid = query.from_user.id if query.from_user else None
@@ -1010,4 +1039,3 @@ async def advantage_spell_chok(message, s):
         await message.delete()
     except:
         pass
-
