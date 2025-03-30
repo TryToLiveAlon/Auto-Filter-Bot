@@ -569,20 +569,21 @@ async def cb_handler(client: Client, query: CallbackQuery):
             parse_mode=enums.ParseMode.HTML
         )
         
-   elif query.data == "about":
-    buttons = [[
-        InlineKeyboardButton('📊 sᴛᴀᴛᴜs 📊', callback_data='stats')
-    ],[  # FIXED YEH
-        InlineKeyboardButton('🧑‍💻 ʙᴏᴛ ᴏᴡɴᴇʀ 🧑‍💻', callback_data='owner')
-    ],[
-        InlineKeyboardButton('« ʙᴀᴄᴋ', callback_data='start')
-    ]]
-    reply_markup = InlineKeyboardMarkup(buttons)
-    await query.message.edit_text(
-        text=script.MY_ABOUT_TXT,
-        reply_markup=reply_markup,
-        parse_mode=enums.ParseMode.HTML
-    )
+      elif query.data == "about":
+        buttons = [[
+            InlineKeyboardButton('📊 sᴛᴀᴛᴜs 📊', callback_data='stats')
+        ],[
+            InlineKeyboardButton('🧑‍💻 ʙᴏᴛ ᴏᴡɴᴇʀ 🧑‍💻', callback_data='owner')
+        ],[
+            InlineKeyboardButton('« ʙᴀᴄᴋ', callback_data='start')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.message.edit_text(
+            text=script.MY_ABOUT_TXT,
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
+        )
+
 
     elif query.data == "stats":
         if query.from_user.id not in ADMINS:
