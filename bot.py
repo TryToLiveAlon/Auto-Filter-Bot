@@ -41,12 +41,14 @@ class Bot(Client):
         except FloodWait as e:
             time_ = get_readable_time(e.value)
             print(f"Warning - Flood Wait Occured, Wait For: {time_}")
-            asyncio.sleep(e.value)
+            await asyncio.sleep(e.value)
             print("Info - Now Ready For Deploying !")
+
         temp.START_TIME = time.time()
         b_users, b_chats = await db.get_banned()
         temp.BANNED_USERS = b_users
         temp.BANNED_CHATS = b_chats
+
         client = MongoClient(DATABASE_URL, server_api=ServerApi('1'))
         try:
             client.admin.command('ping')
@@ -54,6 +56,7 @@ class Bot(Client):
         except Exception as e:
             print("Error - Make sure DATABASE_URL is correct, exiting now")
             exit()
+
         if SECOND_DATABASE_URL:
             client2 = MongoClient(SECOND_DATABASE_URL, server_api=ServerApi('1'))
             try:
@@ -71,6 +74,7 @@ class Bot(Client):
             except:
                 pass
             os.remove('restart.txt')
+
         temp.BOT = self
         await Media.ensure_indexes()
         me = await self.get_me()
@@ -79,23 +83,27 @@ class Bot(Client):
         temp.B_NAME = me.first_name
         username = '@' + me.username
         print(f"{me.first_name} is started now 🤗 (DC ID - {me.dc_id})")
+
         app = web.AppRunner(web_app)
         await app.setup()
         await web.TCPSite(app, "0.0.0.0", PORT).start()
+
         try:
             await self.send_message(chat_id=LOG_CHANNEL, text=f"<b>{me.mention} Restarted! 🤖</b>")
         except:
             print("Error - Make sure bot admin in LOG_CHANNEL, exiting now")
             exit()
+
         try:
             m = await self.send_message(chat_id=BIN_CHANNEL, text="Test")
             await m.delete()
         except:
             print("Error - Make sure bot admin in BIN_CHANNEL, exiting now")
             exit()
+
         for admin in ADMINS:
             try:
-                await self.send_message(chat_id=admin, text="<b>✅ ʙᴏᴛ ʀᴇsᴛᴀʀᴛᴇᴅ</b>")
+                await self.send_message(chat_id=admin, text="<b>✅ بوٹ ریسٹارٹ ہوگیا</b>")
             except:
                 print(f"Info - Admin ({admin}) not started this bot yet")
 
@@ -104,29 +112,6 @@ class Bot(Client):
         print("Bot Stopped! Bye...")
 
     async def iter_messages(self: Client, chat_id: Union[int, str], limit: int, offset: int = 0) -> Optional[AsyncGenerator["types.Message", None]]:
-        """Iterate through a chat sequentially.
-        This convenience method does the same as repeatedly calling :meth:`~pyrogram.Client.get_messages` in a loop, thus saving
-        you from the hassle of setting up boilerplate code. It is useful for getting the whole chat messages with a
-        single call.
-        Parameters:
-            chat_id (``int`` | ``str``):
-                Unique identifier (int) or username (str) of the target chat.
-                For your personal cloud (Saved Messages) you can simply use "me" or "self".
-                For a contact that exists in your Telegram address book you can use his phone number (str).
-                
-            limit (``int``):
-                Identifier of the last message to be returned.
-                
-            offset (``int``, *optional*):
-                Identifier of the first message to be returned.
-                Defaults to 0.
-        Returns:
-            ``Generator``: A generator yielding :obj:`~pyrogram.types.Message` objects.
-        Example:
-            .. code-block:: python
-                async for message in app.iter_messages("pyrogram", 1000, 100):
-                    print(message.text)
-        """
         current = offset
         while True:
             new_diff = min(200, limit - current)
@@ -138,4 +123,10 @@ class Bot(Client):
                 current += 1
 
 app = Bot()
-app.run()
+
+async def main():
+    await app.start()
+    await app.idle()
+
+if __name__ == '__main__':
+    asyncio.run(main())
