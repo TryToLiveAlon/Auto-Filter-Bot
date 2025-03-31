@@ -35,7 +35,7 @@ async def start(client, message):
         ]]
         await message.reply(text=f"<b>ʜᴇʏ {user}, <i>{wish}</i>\nʜᴏᴡ ᴄᴀɴ ɪ ʜᴇʟᴘ ʏᴏᴜ??</b>", reply_markup=InlineKeyboardMarkup(btn))
         return 
-        
+
     if not await db.is_user_exist(message.from_user.id):
         await db.add_user(message.from_user.id, message.from_user.first_name)
         await client.send_message(LOG_CHANNEL, script.NEW_USER_TXT.format(message.from_user.mention, message.from_user.id))
@@ -53,7 +53,10 @@ async def start(client, message):
             InlineKeyboardButton('🧑‍💻 sᴜᴘᴘᴏʀᴛ', url=SUPPORT_LINK)
         ],[
             InlineKeyboardButton('👨‍🚒 ʜᴇʟᴘ', callback_data='help'),
+            InlineKeyboardButton('🔎 sᴇᴀʀᴄʜ ɪɴʟɪɴᴇ', switch_inline_query_current_chat=''),
             InlineKeyboardButton('📚 ᴀʙᴏᴜᴛ', callback_data='about')
+        ],[
+            InlineKeyboardButton('💰 ᴇᴀʀɴ ᴜɴʟɪᴍɪᴛᴇᴅ ᴍᴏɴᴇʏ ʙʏ ʙᴏᴛ 💰', callback_data='earn')
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply_photo(
@@ -82,7 +85,7 @@ async def start(client, message):
             reply_markup = InlineKeyboardMarkup(btn)
         await message.reply(f"✅ You successfully verified until: {get_readable_time(VERIFY_EXPIRE)}", reply_markup=reply_markup, protect_content=True)
         return
-    
+
     verify_status = await get_verify_status(message.from_user.id)
     if IS_VERIFY and not verify_status['is_verified']:
         token = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
@@ -111,7 +114,7 @@ async def start(client, message):
                 parse_mode=enums.ParseMode.HTML
             )
             return 
-        
+
     if mc.startswith('all'):
         _, grp_id, key = mc.split("_", 2)
         files = temp.FILES.get(key)
@@ -179,7 +182,7 @@ async def start(client, message):
         ]]
         await message.reply(f"[{get_size(files.file_size)}] {files.file_name}\n\nYour file is ready, Please get using this link. 👍", reply_markup=InlineKeyboardMarkup(btn), protect_content=True)
         return
-            
+
     CAPTION = settings['caption']
     f_caption = CAPTION.format(
         file_name = files.file_name,
@@ -256,7 +259,7 @@ async def stats(bot, message):
 
     uptime = get_readable_time(time_now() - temp.START_TIME)
     await message.reply_text(script.STATUS_TXT.format(files, users, chats, used_size, free_size, secnd_used_size, secnd_free_size, uptime))    
-    
+
 @Client.on_message(filters.command('settings'))
 async def settings(client, message):
     userid = message.from_user.id if message.from_user else None
@@ -323,7 +326,7 @@ async def save_template(client, message):
         return await message.reply_text("Command Incomplete!")   
     await save_group_settings(grp_id, 'template', template)
     await message.reply_text(f"Successfully changed template for {title} to\n\n{template}")  
-    
+
 @Client.on_message(filters.command('set_caption'))
 async def save_caption(client, message):
     userid = message.from_user.id if message.from_user else None
@@ -342,7 +345,7 @@ async def save_caption(client, message):
         return await message.reply_text("Command Incomplete!") 
     await save_group_settings(grp_id, 'caption', caption)
     await message.reply_text(f"Successfully changed caption for {title} to\n\n{caption}")
-        
+
 @Client.on_message(filters.command('set_shortlink'))
 async def save_shortlink(client, message):
     userid = message.from_user.id if message.from_user else None
@@ -366,7 +369,7 @@ async def save_shortlink(client, message):
     await save_group_settings(grp_id, 'url', url)
     await save_group_settings(grp_id, 'api', api)
     await message.reply_text(f"Successfully changed shortlink for {title} to\n\nURL - {url}\nAPI - {api}")
-    
+
 @Client.on_message(filters.command('get_custom_settings'))
 async def get_custom_settings(client, message):
     userid = message.from_user.id if message.from_user else None
@@ -418,7 +421,7 @@ async def save_welcome(client, message):
         return await message.reply_text("Command Incomplete!")    
     await save_group_settings(grp_id, 'welcome_text', welcome)
     await message.reply_text(f"Successfully changed welcome for {title} to\n\n{welcome}")
-        
+
 @Client.on_message(filters.command('delete'))
 async def delete_file(bot, message):
     user_id = message.from_user.id
@@ -439,7 +442,7 @@ async def delete_file(bot, message):
         InlineKeyboardButton("CLOSE", callback_data="close_data")
     ]]
     await msg.edit(f"Total {total} files found in your query {query}.\n\nDo you want to delete?", reply_markup=InlineKeyboardMarkup(btn))
- 
+
 @Client.on_message(filters.command('delete_all'))
 async def delete_all_index(bot, message):
     user_id = message.from_user.id
@@ -501,7 +504,7 @@ async def ping(client, message):
     msg = await message.reply("👀")
     end_time = time_now.monotonic()
     await msg.edit(f'{round((end_time - start_time) * 1000)} ms')
-    
+
 
 @Client.on_message(filters.command('set_fsub'))
 async def set_fsub(client, message):
