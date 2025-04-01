@@ -43,10 +43,10 @@ async def group_search(client, message):
                 ]]
                 await message.reply_text(f'Total {total} results found in this group', reply_markup=InlineKeyboardMarkup(btn))
             return
-            
+
         if message.text.startswith("/"):
             return
-            
+
         elif '@admin' in message.text.lower() or '@admins' in message.text.lower():
             if await is_check_admin(client, message.chat.id, message.from_user.id):
                 return
@@ -76,7 +76,7 @@ async def group_search(client, message):
                 return
             await message.delete()
             return await message.reply('Links not allowed here!')
-        
+
         elif '#request' in message.text.lower():
             if message.from_user.id in ADMINS:
                 return
@@ -156,7 +156,7 @@ async def next_page(bot, query):
         off_set = None
     else:
         off_set = offset - MAX_BTN
-        
+
     if n_offset == 0:
         btn.append(
             [InlineKeyboardButton("« ʙᴀᴄᴋ", callback_data=f"next_{req}_{key}_{off_set}"),
@@ -243,7 +243,7 @@ async def filter_languages_cb_handler(client: Client, query: CallbackQuery):
             [InlineKeyboardButton("♻️ sᴇɴᴅ ᴀʟʟ ♻️", callback_data=f"send_all#{key}#{req}"),
             InlineKeyboardButton("🔍 ǫᴜᴀʟɪᴛʏ", callback_data=f"quality#{key}#{req}#{offset}")]
         )
-    
+
     if l_offset != "":
         btn.append(
             [InlineKeyboardButton(text=f"1/{math.ceil(int(total_results) / MAX_BTN)}", callback_data="buttons"),
@@ -472,7 +472,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             await query.message.reply_to_message.delete()
         except:
             pass
-  
+
     if query.data.startswith("file"):
         ident, file_id = query.data.split("#")
         try:
@@ -492,7 +492,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
         ident, group_id, key = query.data.split("#")
         await query.answer(url=f"https://t.me/{temp.U_NAME}?start=all_{group_id}_{key}")
         await query.message.delete()
-        
+
     elif query.data.startswith("stream"):
         file_id = query.data.split('#', 1)[1]
         msg = await client.send_cached_media(chat_id=BIN_CHANNEL, file_id=file_id)
@@ -508,8 +508,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.edit_message_reply_markup(
             reply_markup=reply_markup
         )
-    
-            
+
+
     elif query.data.startswith("checksub"):
         ident, mc = query.data.split("#")
         settings = await get_settings(int(mc.split("_", 2)[1]))
@@ -544,7 +544,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 await query.message.delete()
             except:
                 return
-   
+
     elif query.data == "buttons":
         await query.answer("⚠️")
 
@@ -558,7 +558,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             InlineKeyboardButton('ℹ️ ᴜᴘᴅᴀᴛᴇs', url=UPDATES_LINK),
             InlineKeyboardButton('🧑‍💻 ꜱᴜᴘᴘᴏʀᴛ', url=SUPPORT_LINK)
         ],[
-            InlineKeyboardButton('👨‍🚒 ʜᴇʟᴘ', callback_data='help'),
             InlineKeyboardButton('📚 ᴀʙᴏᴜᴛ', callback_data='about')
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
@@ -567,12 +566,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup,
             parse_mode=enums.ParseMode.HTML
         )
-        
+
     elif query.data == "about":
         buttons = [[
             InlineKeyboardButton('📊 sᴛᴀᴛᴜs 📊', callback_data='stats')
-        ],[
-            InlineKeyboardButton('🧑‍💻 ʙᴏᴛ ᴏᴡɴᴇʀ 🧑‍💻', callback_data='owner')
         ],[
             InlineKeyboardButton('« ʙᴀᴄᴋ', callback_data='start')
         ]]
@@ -604,24 +601,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
         ]]
         await query.message.edit_text(script.STATUS_TXT.format(files, users, chats, used_size, free_size, secnd_used_size, secnd_free_size, uptime), reply_markup=InlineKeyboardMarkup(buttons)
         )
-        
-    elif query.data == "owner":
-        buttons = [[
-            InlineKeyboardButton(text=f"☎️ ᴄᴏɴᴛᴀᴄᴛ - {(await client.get_users(admin)).first_name}", user_id=admin)
-        ]
-            for admin in ADMINS
-        ]
-        buttons.append(
-            [InlineKeyboardButton('« ʙᴀᴄᴋ', callback_data='about')]
-        )
-        reply_markup = InlineKeyboardMarkup(buttons)
-        await query.message.edit_text(
-            text=script.MY_OWNER_TXT,
-            reply_markup=reply_markup,
-            parse_mode=enums.ParseMode.HTML
-        )
-      
-        
+
+
+
+
     elif query.data == "help":
         buttons = [[
             InlineKeyboardButton('Admin Command', callback_data='admin_command')
@@ -634,8 +617,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup
         )
 
-    
-        
+
+
     elif query.data == "admin_command":
         if query.from_user.id not in ADMINS:
             return await query.answer("ADMINS Only!", show_alert=True)
@@ -648,8 +631,8 @@ async def cb_handler(client: Client, query: CallbackQuery):
             reply_markup=reply_markup
         )
 
-   
-  
+
+
     elif query.data.startswith("setgs"):
         ident, set_type, status, grp_id = query.data.split("#")
         userid = query.from_user.id if query.from_user else None
@@ -698,13 +681,13 @@ async def cb_handler(client: Client, query: CallbackQuery):
             await query.message.edit_reply_markup(reply_markup)
         else:
             await query.message.edit_text("Something went wrong!")
-            
+
     elif query.data == "delete_all":
         files = await Media.count_documents()
         await query.answer('Deleting...')
         await Media.collection.drop()
         await query.message.edit_text(f"Successfully deleted {files} files")
-        
+
     elif query.data.startswith("delete"):
         _, query_ = query.data.split("_", 1)
         deleted = 0
@@ -714,7 +697,7 @@ async def cb_handler(client: Client, query: CallbackQuery):
             await Media.collection.delete_one({'_id': file.file_id})
             deleted += 1
         await query.message.edit(f'Deleted {deleted} files in your database in your query {query_}')
-     
+
     elif query.data.startswith("send_all"):
         ident, key, req = query.data.split("#")
         if int(req) != query.from_user.id:
