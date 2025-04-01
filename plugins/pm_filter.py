@@ -602,33 +602,20 @@ async def cb_handler(client: Client, query: CallbackQuery):
         await query.message.edit_text(script.STATUS_TXT.format(files, users, chats, used_size, free_size, secnd_used_size, secnd_free_size, uptime), reply_markup=InlineKeyboardMarkup(buttons)
         )
 
-
-
-
-    elif query.data == "help":
+    elif query.data == "owner":
         buttons = [[
-            InlineKeyboardButton('Admin Command', callback_data='admin_command')
-        ],[
-            InlineKeyboardButton('« ʙᴀᴄᴋ', callback_data='start')
-        ]]
-        reply_markup = InlineKeyboardMarkup(buttons)
-        await query.message.edit_text(
-            text=script.HELP_TXT,
-            reply_markup=reply_markup
+            InlineKeyboardButton(text=f"☎️ ᴄᴏɴᴛᴀᴄᴛ - {(await client.get_users(admin)).first_name}", user_id=admin)
+        ]
+            for admin in ADMINS
+        ]
+        buttons.append(
+            [InlineKeyboardButton('« ʙᴀᴄᴋ', callback_data='about')]
         )
-
-
-
-    elif query.data == "admin_command":
-        if query.from_user.id not in ADMINS:
-            return await query.answer("ADMINS Only!", show_alert=True)
-        buttons = [[
-            InlineKeyboardButton('« ʙᴀᴄᴋ', callback_data='help')
-        ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await query.message.edit_text(
-            text=script.ADMIN_COMMAND_TXT,
-            reply_markup=reply_markup
+            text=script.MY_OWNER_TXT,
+            reply_markup=reply_markup,
+            parse_mode=enums.ParseMode.HTML
         )
 
 
