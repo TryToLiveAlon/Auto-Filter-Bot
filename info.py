@@ -36,10 +36,10 @@ if len(BOT_TOKEN) == 0:
 PORT = int(environ.get('PORT', '80'))
 
 # Add your images to "imgs" folder in this repo (https://github.com/HA-Bots/Auto-Filter-Bot/tree/main/imgs)
-PICS = [os.path.join('imgs', file) for file in os.listdir('imgs')]
+PICS = [os.path.join('imgs', file) for file in os.listdir('https://envs.sh/cK-.jpg https://envs.sh/czE.jpg https://envs.sh/czD.jpg')]
 
 # Bot Admins
-ADMINS = environ.get('ADMINS', '6660736046')
+ADMINS = environ.get('ADMINS', '6660736046 6243694287 6893463477')
 if len(ADMINS) == 0:
     print('Error - ADMINS is missing, exiting now')
     exit()
@@ -50,7 +50,7 @@ else:
 INDEX_CHANNELS = [int(index_channels) if index_channels.startswith("-") else index_channels for index_channels in environ.get('INDEX_CHANNELS', '-1001813495612').split()]
 if len(INDEX_CHANNELS) == 0:
     print('Info - INDEX_CHANNELS is empty')
-LOG_CHANNEL = environ.get('LOG_CHANNEL', '-1002097438993')
+LOG_CHANNEL = environ.get('LOG_CHANNEL', '-1002466764492')
 if len(LOG_CHANNEL) == 0:
     print('Error - LOG_CHANNEL is missing, exiting now')
     exit()
@@ -80,15 +80,15 @@ DATABASE_NAME = environ.get('DATABASE_NAME', "cluster0")
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Files')
 
 # Links
-SUPPORT_LINK = environ.get('SUPPORT_LINK', 'https://t.me/Death_Support')
-UPDATES_LINK = environ.get('UPDATES_LINK', 'https://t.me/TryToLiveAlon')
-FILMS_LINK = environ.get('FILMS_LINK', 'https://t.me/Death_Movie')
+SUPPORT_LINK = environ.get('SUPPORT_LINK', 'https://t.me/Death_Movies')
+UPDATES_LINK = environ.get('UPDATES_LINK', 'https://t.me/Death_Movie')
+FILMS_LINK = environ.get('FILMS_LINK', 'https://t.me/DeathMovies_request')
 TUTORIAL = environ.get("TUTORIAL", "https://t.me/Deathverifytutorial")
 VERIFY_TUTORIAL = environ.get("VERIFY_TUTORIAL", "https://t.me/Deathverifytutorial")
 
 # Bot settings
 TIME_ZONE = pytz.timezone(environ.get("TIME_ZONE", 'Asia/kolkata'))
-DELETE_TIME = int(environ.get('DELETE_TIME', 3600)) # Add time in seconds
+DELETE_TIME = int(environ.get('DELETE_TIME', 500)) # Add time in seconds
 CACHE_TIME = int(environ.get('CACHE_TIME', 300))
 MAX_BTN = int(environ.get('MAX_BTN', 10))
 LANGUAGES = [language.lower() for language in environ.get('LANGUAGES', 'hindi english telugu tamil kannada malayalam marathi punjabi').split()]
@@ -100,7 +100,7 @@ SHORTLINK_API = environ.get("SHORTLINK_API", "465fc84f05fa0856f83cf14c739ee5a494
 VERIFY_EXPIRE = int(environ.get('VERIFY_EXPIRE', 86400)) # Add time in seconds
 WELCOME_TEXT = environ.get("WELCOME_TEXT", script.WELCOME_TEXT)
 INDEX_EXTENSIONS = [extensions.lower() for extensions in environ.get('INDEX_EXTENSIONS', 'mp4 mkv').split()]
-PM_FILE_DELETE_TIME = int(environ.get('PM_FILE_DELETE_TIME', '3600'))
+PM_FILE_DELETE_TIME = int(environ.get('PM_FILE_DELETE_TIME', '600'))
 
 # boolean settings
 USE_CAPTION_FILTER = is_enabled('USE_CAPTION_FILTER', True)
